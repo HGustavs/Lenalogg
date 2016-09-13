@@ -17,6 +17,25 @@
 				    ctx.moveTo(0,550);
 				    ctx.lineTo(1500,550);
 				    ctx.stroke();
+				    
+				    // Hour is 60px and each minute is 1px
+						ctx.font="20px Arial";
+				    for(i=0;i<25;i++){
+								var klocka="";
+								if(i<10) klocka+="0";
+								
+								if(i<24){
+										klocka+=i+":00";
+										ctx.fillStyle="#aaa";
+										ctx.fillText(klocka,(i*60)+5,575);								
+								}
+
+						    ctx.strokeStyle="#AAA";
+								ctx.beginPath();
+						    ctx.moveTo(i*60,00);
+						    ctx.lineTo(i*60,555);
+						    ctx.stroke();
+				    }
 				    				
 				}
 
@@ -119,7 +138,7 @@
 	      <canvas id="myCanvas" width="2200" height="600" style="display:block;border:1px solid red;">
 	      </canvas>
 
-				<div id="content" style="border:1px solid green;" >
+				<div id="content" style="border:1px solid green;display:none;" >
 					Foo!
 				</div>
 
