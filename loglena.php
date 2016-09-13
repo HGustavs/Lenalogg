@@ -16,6 +16,8 @@
 						ctx.beginPath();
 				    ctx.moveTo(0,550);
 				    ctx.lineTo(1500,550);
+				    ctx.moveTo(0,752);
+				    ctx.lineTo(1500,752);
 				    ctx.stroke();
 				    
 				    // Hour is 60px and each minute is 1px
@@ -23,11 +25,18 @@
 				    for(i=0;i<25;i++){
 								var klocka="";
 								if(i<10) klocka+="0";
-								
+
+								// Draw hour border and background								
 								if(i<24){
 										klocka+=i+":00";
 										ctx.fillStyle="#aaa";
 										ctx.fillText(klocka,(i*60)+5,575);								
+
+										if(i%2==0){
+												ctx.fillStyle="#f8f8f8";
+												ctx.fillRect(i*60,0,60,548);								
+										}
+
 								}
 
 						    ctx.strokeStyle="#AAA";
@@ -42,13 +51,14 @@
 				// Sort on interval length
 				entries.sort(
 						function(a, b){
-								return a.interval-b.interval
+								return b.interval-a.interval
 						}
 				);
 				
 				var filter="UNKO";
 				
 				str="<table>";
+				var j=0;
 				for(i=0;i<entries.length;i++){
 						var ar=entries[i].timest.substring(0,4);
 						var man=entries[i].timest.substring(5,7);
@@ -78,13 +88,23 @@
 								if(entries[i].service=="courseedservice.php") sst="#b44";
 								if(entries[i].service=="resultedservice.php") sst="#44b";								
 								
-								
-								
 								ctx.strokeStyle=sst;								
 								ctx.beginPath();
+								
+								// Time Based Plot
 								ctx.moveTo(xk,550);
 								ctx.lineTo(xk,550-ln);
+								
+								// Sorted Plot
+								if(ln>150) ln=150;
+								ctx.moveTo(j,750);
+								ctx.lineTo(j,750-ln);
+
 								ctx.stroke();
+								
+								// Advance Forward in sorted view
+								j++;
+								
 						}						
 
 				}
@@ -135,7 +155,7 @@
 </head>
 <body onload="initcanvas();">
 
-	      <canvas id="myCanvas" width="2200" height="600" style="display:block;border:1px solid red;">
+	      <canvas id="myCanvas" width="2200" height="1200" style="display:block;border:1px solid red;">
 	      </canvas>
 
 				<div id="content" style="border:1px solid green;display:none;" >
