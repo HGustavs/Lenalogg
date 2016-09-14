@@ -15,14 +15,23 @@
 				var dayz=document.getElementById("dayz").value;
 				var viewz=document.getElementById("viewz").value;
 				var servz=document.getElementById("servz").value;
-				
+							
 				// Always Clear Screen
 				ctx.clearRect(0,0,2200,768);
 				
 				var filter="UNKO";
 				
 				if(viewz=="Daily R" || viewz=="Tab R"){
-					
+
+						// Prefiltering
+						entries=[];
+						for(var i=0;i<entriez.length;i++){
+								if(( entriez[i].ar==yearz && entriez[i].man==monthz && entriez[i].dag==dayz)){
+										entries.push(entriez[i]);
+								}
+						}
+
+						// Show the relevant view
 						if(viewz=="Daily R"){
 								document.getElementById("myCanvas").style.display="block";
 								document.getElementById("content").style.display="none";
@@ -31,40 +40,6 @@
 								document.getElementById("content").style.display="block";						
 						}
 
-						// Clock Diagram Guide Lines				
-				    ctx.strokeStyle="#000";
-						ctx.beginPath();
-				    ctx.moveTo(0,550);
-				    ctx.lineTo(1500,550);
-				    ctx.moveTo(0,752);
-				    ctx.lineTo(1500,752);
-				    ctx.stroke();
-				    
-				    // Hour is 60px and each minute is 1px
-						ctx.font="20px Arial";
-				    for(i=0;i<25;i++){
-								var klocka="";
-								if(i<10) klocka+="0";
-		
-								// Draw hour border and background								
-								if(i<24){
-										klocka+=i+":00";
-										ctx.fillStyle="#aaa";
-										ctx.fillText(klocka,(i*60)+5,575);								
-		
-										if(i%2==0){
-												ctx.fillStyle="#f8f8f8";
-												ctx.fillRect(i*60,0,60,548);								
-										}
-		
-								}
-		
-						    ctx.strokeStyle="#AAA";
-								ctx.beginPath();
-						    ctx.moveTo(i*60,00);
-						    ctx.lineTo(i*60,555);
-						    ctx.stroke();
-				    }
 						
 						if(sortz=="U"){
 								// Sort on interval length
@@ -91,64 +66,92 @@
 								);						
 						}
 
-						str="<table>";
+						if(viewz=="Tab R"){
+								str="<table>";						
+						}else if (viewz=="Daily R"){
+									// Clock Diagram Guide Lines				
+						    ctx.strokeStyle="#000";
+								ctx.beginPath();
+						    ctx.moveTo(0,550);
+						    ctx.lineTo(1500,550);
+						    ctx.moveTo(0,752);
+						    ctx.lineTo(1500,752);
+						    ctx.stroke();
+						    
+						    // Hour is 60px and each minute is 1px
+								ctx.font="20px Arial";
+						    for(i=0;i<25;i++){
+										var klocka="";
+										if(i<10) klocka+="0";
+				
+										// Draw hour border and background								
+										if(i<24){
+												klocka+=i+":00";
+												ctx.fillStyle="#aaa";
+												ctx.fillText(klocka,(i*60)+5,575);								
+				
+												if(i%2==0){
+														ctx.fillStyle="#f8f8f8";
+														ctx.fillRect(i*60,0,60,548);								
+												}
+				
+										}
+				
+								    ctx.strokeStyle="#AAA";
+										ctx.beginPath();
+								    ctx.moveTo(i*60,00);
+								    ctx.lineTo(i*60,555);
+								    ctx.stroke();
+						    }					
+						}
 
 						var j=0;
 						for(i=0;i<entries.length;i++){
-								var ar=entries[i].timest.substring(0,4);
-								var man=entries[i].timest.substring(5,7);
-								var dag=entries[i].timest.substring(8,10);
-								var tim=entries[i].timest.substring(11,13);
-								var min=entries[i].timest.substring(14,16);						
-								var sec=entries[i].timest.substring(17,19);
 								var interval=entries[i].interval;
-								var xk=parseInt(min)+(parseInt(tim)*60.0);
+								var xk=parseInt(entries[i].min)+(parseInt(entries[i].tim)*60.0);
 								var ln=interval*0.1;
-								
-								if(( ar==yearz && man==monthz && dag==dayz) || filter=="UNK"){
-								
-										if(viewz=="Tab R"){
-												str+="<tr>";
-												str+="<td>"+entries[i].id+"</td>";
-												str+="<td>"+entries[i].timest+"</td>";
-												str+="<td>"+entries[i].service+"</td>";
-												str+="<td>"+entries[i].interval+"</td>";
-				
-												str+="<td>"+tim+"</td>";
-												str+="<td>"+min+"</td>";
-												str+="<td>"+sec+"</td>";
-												str+="<td>"+xk+"</td>";
-				
-												str+="</tr>";
-										}else{
-												var sst="#4b4";
-												if(entries[i].service=="courseedservice.php") sst="#b44";
-												if(entries[i].service=="resultedservice.php") sst="#44b";								
-												
-												ctx.strokeStyle=sst;								
-												ctx.beginPath();
-												
-												// Time Based Plot
-												ctx.moveTo(xk,550);
-												ctx.lineTo(xk,550-ln);
-												
-												// Sorted Plot
-												if(ln>150) ln=150;
-												ctx.moveTo(j,750);
-												ctx.lineTo(j,750-ln);
-				
-												ctx.stroke();
-										}
-																				
-										// Advance Forward in sorted view
-										j++;
-										
-								}						
+																
+								if(viewz=="Tab R"){
+										str+="<tr>";
+										str+="<td>"+entries[i].id+"</td>";
+										str+="<td>"+entries[i].timest+"</td>";
+										str+="<td>"+entries[i].service+"</td>";
+										str+="<td>"+entries[i].interval+"</td>";
 		
+										str+="<td>"+entries[i].tim+"</td>";
+										str+="<td>"+entries[i].min+"</td>";
+										str+="<td>"+entries[i].sec+"</td>";
+										str+="<td>"+xk+"</td>";
+		
+										str+="</tr>";
+								}else{
+										var sst="#4b4";
+										if(entries[i].service=="courseedservice.php") sst="#b44";
+										if(entries[i].service=="resultedservice.php") sst="#44b";								
+										
+										ctx.strokeStyle=sst;								
+										ctx.beginPath();
+										
+										// Time Based Plot
+										ctx.moveTo(xk,550);
+										ctx.lineTo(xk,550-ln);
+										
+										// Sorted Plot
+										if(ln>150) ln=150;
+										ctx.moveTo(j,750);
+										ctx.lineTo(j,750-ln);
+		
+										ctx.stroke();
+								}
+																		
+								// Advance Forward in sorted view
+								j++;
 						}
-						str+="</table>";
-						document.getElementById("content").innerHTML=str;		
-				
+
+						if(viewz=="Tab R"){
+								str+="</table>";
+								document.getElementById("content").innerHTML=str;		
+						}
 				}else{
 				
 				}
@@ -199,7 +202,7 @@
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute();
 		
-		echo "var entries=[";
+		echo "var entriez=[";
 		$i=0;
 		foreach($stmt as $key => $row){
 				if(isset($oldrow)){
@@ -218,7 +221,22 @@
 								echo '"uuid":"'.$row['uuid'].'",';
 								echo '"service":"'.$row['service'].'",';
 								echo '"interval":"'.$interval.'",';
-								echo '"timest":"'.$row['timest'].'"';
+
+								echo '"interval":"'.$interval.'",';
+								echo '"interval":"'.$interval.'",';
+								echo '"interval":"'.$interval.'",';
+								echo '"interval":"'.$interval.'",';
+
+								$timest=$row['timest'];
+
+								echo '"ar":"'.substr($timest,0,4).'",';
+								echo '"man":"'.substr($timest,5,2).'",';
+								echo '"dag":"'.substr($timest,8,2).'",';
+								echo '"tim":"'.substr($timest,11,2).'",';
+								echo '"min":"'.substr($timest,14,2).'",';
+								echo '"sec":"'.substr($timest,17,2).'",';
+
+								echo '"timest":"'.$timest.'"';
 								echo "}";
 						}
 				}
