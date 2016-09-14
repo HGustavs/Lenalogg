@@ -6,6 +6,15 @@
    <script>
 		var ctx;
 		
+		var colorz=[];
+		
+		colorz["courseedservice.php"]="#b36";
+		colorz["filerecrive.php"]="#b63";
+		colorz["resultedservice.php"]="#36b";
+		colorz["sectionedservice.php"]="#3b6";
+		colorz["showDuggaservice.php"]="#6b3";
+		colorz["duggaedservice.php"]="#6b3";
+				
 		function redraw()
 		{
 				var sortz=document.getElementById("sortz").value;
@@ -15,6 +24,11 @@
 				var dayz=document.getElementById("dayz").value;
 				var viewz=document.getElementById("viewz").value;
 				var servz=document.getElementById("servz").value;
+
+				
+				if(servz==""){
+						servz="ALL";
+				}
 							
 				// Always Clear Screen
 				ctx.clearRect(0,0,2200,768);
@@ -130,11 +144,9 @@
 		
 										str+="</tr>";
 								}else{
-										var sst="#4b4";
-										if(entries[i].service=="courseedservice.php") sst="#b44";
-										if(entries[i].service=="resultedservice.php") sst="#44b";								
-										
+										sst=colorz[entries[i].service];
 										ctx.strokeStyle=sst;								
+
 										ctx.beginPath();
 										
 										// Time Based Plot
@@ -167,11 +179,35 @@
 								}
 						}
 						
+						var servcoord=[];
+					
 						// No sorting in this view!
 						for(i=0;i<entries.length;i++){
 								var interval=entries[i].interval;
 								var xk=parseInt(entries[i].min)+(parseInt(entries[i].tim)*60.0);
 								var ln=interval*0.1;
+								if(servz=="ALL"||servz==entries[i].service){
+										ctx.beginPath();
+										
+										sst=colorz[entries[i].service];
+										ctx.strokeStyle=sst;								
+		
+										// Draw line
+										if(servcoord[entries[i].service] != undefined){
+												// Was previously found - draw between old and new
+												ctx.moveTo(servcoord[entries[i].service].xk,550-servcoord[entries[i].service].yk);
+												ctx.lineTo(xk,550-ln);
+										}else{
+												// Was not previously found - draw between 0 and new
+												ctx.moveTo(0,550-ln);
+												ctx.lineTo(xk,550-ln);
+										}								
+										
+										// Declare object for next time
+										servcoord[entries[i].service]={"xk":xk,"yk":ln};
+		
+										ctx.stroke();
+								}
 						}											
 				
 				}
