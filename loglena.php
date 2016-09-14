@@ -22,6 +22,14 @@
 				var filter="UNKO";
 				
 				if(viewz=="Daily R" || viewz=="Tab R"){
+					
+						if(viewz=="Daily R"){
+								document.getElementById("myCanvas").style.display="block";
+								document.getElementById("content").style.display="none";
+						}else if(viewz=="Tab R"){
+								document.getElementById("myCanvas").style.display="none";
+								document.getElementById("content").style.display="block";						
+						}
 
 						// Clock Diagram Guide Lines				
 				    ctx.strokeStyle="#000";
@@ -70,6 +78,15 @@
 								entries.sort(
 										function(a, b){
 												return a.interval-b.interval
+										}
+								);						
+						}else if(sortz=="T"){
+								// Sort on timestamp
+								entries.sort(
+										function(a, b){
+												if(a.timest < b.timest) return -1;
+												if(a.timest > b.timest) return 1;
+												return 0;
 										}
 								);						
 						}
@@ -217,7 +234,7 @@
 
 				<div class="topmenu">
 						<table>
-								<td>Sort:&nbsp;<select onchange="redraw()" id="sortz"><option value="U">&#x25B2;</option><option value="D">&#x25BC;</option></select></td>
+								<td>Sort:&nbsp;<select onchange="redraw()" id="sortz"><option value="U">&#x25B2;</option><option value="D">&#x25BC;</option><option value="T">&hearts;</option></select></td>
 								<td>Year:&nbsp;<select onchange="redraw()" id="yearz"><option>2015</option><option>2016</option><option>2017</option></select></td>
 								<td>Month:&nbsp;<select onchange="redraw()" id="monthz"><option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option><option value="04">Apr</option><option value="05">May</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Aug</option><option value="09">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="01">Dec</option></select></td>
 								<td>Day:&nbsp;<select onchange="redraw()" id="dayz"><option>01</option><option>02</option><option>03</option><option>04</option><option>05</option><option>06</option><option>07</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option></select></td>
