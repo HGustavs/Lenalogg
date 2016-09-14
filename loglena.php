@@ -21,6 +21,54 @@
 				
 				var filter="UNKO";
 				
+				// Prepare grid lines if applicable
+				if(viewz=="Daily R"||viewz=="View R"){
+							// Clock Diagram Guide Lines				
+				    ctx.strokeStyle="#000";
+						ctx.beginPath();
+				    ctx.moveTo(0,550);
+				    ctx.lineTo(1500,550);
+				    ctx.moveTo(0,752);
+				    ctx.lineTo(1500,752);
+				    ctx.stroke();
+				    
+				    // Hour is 60px and each minute is 1px
+						ctx.font="20px Arial";
+				    for(i=0;i<25;i++){
+								var klocka="";
+								if(i<10) klocka+="0";
+		
+								// Draw hour border and background								
+								if(i<24){
+										klocka+=i+":00";
+										ctx.fillStyle="#aaa";
+										ctx.fillText(klocka,(i*60)+5,575);								
+		
+										if(i%2==0){
+												ctx.fillStyle="#f8f8f8";
+												ctx.fillRect(i*60,0,60,548);								
+										}
+		
+								}
+		
+						    ctx.strokeStyle="#AAA";
+								ctx.beginPath();
+						    ctx.moveTo(i*60,00);
+						    ctx.lineTo(i*60,555);
+						    ctx.stroke();
+				    }											
+				}
+
+				// Show the relevant view
+				if(viewz=="Daily R" || viewz=="View R"){
+						document.getElementById("myCanvas").style.display="block";
+						document.getElementById("content").style.display="none";
+				}else if(viewz=="Tab R"){
+						document.getElementById("myCanvas").style.display="none";
+						document.getElementById("content").style.display="block";						
+				}
+						
+				// Produce Content!
 				if(viewz=="Daily R" || viewz=="Tab R"){
 
 						// Prefiltering
@@ -30,16 +78,6 @@
 										entries.push(entriez[i]);
 								}
 						}
-
-						// Show the relevant view
-						if(viewz=="Daily R"){
-								document.getElementById("myCanvas").style.display="block";
-								document.getElementById("content").style.display="none";
-						}else if(viewz=="Tab R"){
-								document.getElementById("myCanvas").style.display="none";
-								document.getElementById("content").style.display="block";						
-						}
-
 						
 						if(sortz=="U"){
 								// Sort on interval length
@@ -69,40 +107,7 @@
 						if(viewz=="Tab R"){
 								str="<table>";						
 						}else if (viewz=="Daily R"){
-									// Clock Diagram Guide Lines				
-						    ctx.strokeStyle="#000";
-								ctx.beginPath();
-						    ctx.moveTo(0,550);
-						    ctx.lineTo(1500,550);
-						    ctx.moveTo(0,752);
-						    ctx.lineTo(1500,752);
-						    ctx.stroke();
-						    
-						    // Hour is 60px and each minute is 1px
-								ctx.font="20px Arial";
-						    for(i=0;i<25;i++){
-										var klocka="";
-										if(i<10) klocka+="0";
-				
-										// Draw hour border and background								
-										if(i<24){
-												klocka+=i+":00";
-												ctx.fillStyle="#aaa";
-												ctx.fillText(klocka,(i*60)+5,575);								
-				
-												if(i%2==0){
-														ctx.fillStyle="#f8f8f8";
-														ctx.fillRect(i*60,0,60,548);								
-												}
-				
-										}
-				
-								    ctx.strokeStyle="#AAA";
-										ctx.beginPath();
-								    ctx.moveTo(i*60,00);
-								    ctx.lineTo(i*60,555);
-								    ctx.stroke();
-						    }					
+
 						}
 
 						var j=0;
@@ -152,7 +157,22 @@
 								str+="</table>";
 								document.getElementById("content").innerHTML=str;		
 						}
-				}else{
+				}else if(viewz=="View R"){
+
+						// Prefiltering
+						entries=[];
+						for(var i=0;i<entriez.length;i++){
+								if(( entriez[i].ar==yearz && entriez[i].man==monthz && entriez[i].dag==dayz)){
+										entries.push(entriez[i]);
+								}
+						}
+						
+						// No sorting in this view!
+						for(i=0;i<entries.length;i++){
+								var interval=entries[i].interval;
+								var xk=parseInt(entries[i].min)+(parseInt(entries[i].tim)*60.0);
+								var ln=interval*0.1;
+						}											
 				
 				}
 
