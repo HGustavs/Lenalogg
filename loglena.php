@@ -1,6 +1,21 @@
 <html>
 <head>
    <style>
+   		table{
+   				margin-top:10px;
+   				border:2px solid black;
+   				border-collapse: collapse;
+   				font-family:Arial Narrow;
+   		}
+   		
+   		td{
+   				padding-left:4px;
+   		}
+   		
+   		th{
+   				color:#fff;
+   				background:#000;
+   		}
    </style>
 
    <script>
@@ -119,28 +134,50 @@
 						}
 
 						if(viewz=="Tab R"){
-								str="<table>";						
+								str="<table>";
+								str+="<tr>";
+								str+="<th>id</th>";
+								str+="<th>timestamp</th>";
+								str+="<th>service</th>";
+								str+="<th>interval</th>";
+
+								str+="</tr>";						
 						}else if (viewz=="Daily R"){
 
 						}
 
 						var j=0;
+						var lxk=0;
+						var nxk=0;
 						for(i=0;i<entries.length;i++){
 								var interval=entries[i].interval;
 								var xk=parseInt(entries[i].min)+(parseInt(entries[i].tim)*60.0);
+								if(i<entries.length-1){
+										nxk=parseInt(entries[i+1].min)+(parseInt(entries[i+1].tim)*60.0);								
+								}else{
+										nxk=parseInt(entries[i].min)+(parseInt(entries[i].tim)*60.0);																
+								}
 								var ln=interval*0.1;
 																
 								if(viewz=="Tab R"){
-										str+="<tr>";
+										
+										if(((xk-lxk)>15)||((nxk-xk)>15)){
+												hstyle="background:#cba";		
+										}else{
+												hstyle="background:#fff";
+										}
+
+										str+="<tr style='"+hstyle+"'>";
+										
 										str+="<td>"+entries[i].id+"</td>";
 										str+="<td>"+entries[i].timest+"</td>";
 										str+="<td>"+entries[i].service+"</td>";
-										str+="<td>"+entries[i].interval+"</td>";
-		
-										str+="<td>"+entries[i].tim+"</td>";
-										str+="<td>"+entries[i].min+"</td>";
-										str+="<td>"+entries[i].sec+"</td>";
-										str+="<td>"+xk+"</td>";
+										str+="<td>"+entries[i].interval+"</td>";	
+										
+										if(((xk-lxk)>15)||((nxk-xk)>15)){
+												str+="<td>"+((xk-lxk))+"</td>";												
+										}
+										lxk=xk;
 		
 										str+="</tr>";
 								}else{
@@ -166,6 +203,8 @@
 						}
 
 						if(viewz=="Tab R"){
+							
+							
 								str+="</table>";
 								document.getElementById("content").innerHTML=str;		
 						}
