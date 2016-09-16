@@ -108,21 +108,7 @@
 								}
 						}
 						
-						if(sortz=="U"){
-								// Sort on interval length
-								entries.sort(
-										function(a, b){
-												return b.interval-a.interval
-										}
-								);
-						}else if(sortz=="D"){
-								// Sort on interval length
-								entries.sort(
-										function(a, b){
-												return a.interval-b.interval
-										}
-								);						
-						}else if(sortz=="T"){
+						if(sortz=="T"||viewz=="Tab R"){
 								// Sort on timestamp
 								entries.sort(
 										function(a, b){
@@ -130,7 +116,21 @@
 												if(a.timest > b.timest) return 1;
 												return 0;
 										}
+								);	
+						}else if(sortz=="D"){
+								// Sort on interval length
+								entries.sort(
+										function(a, b){
+												return a.interval-b.interval
+										}
 								);						
+						}else if(sortz=="U"){
+								// Sort on interval length
+								entries.sort(
+										function(a, b){
+												return b.interval-a.interval
+										}
+								);
 						}
 
 						if(viewz=="Tab R"){
@@ -291,28 +291,112 @@
 						var servlist=[];
 						var keys = [];
   						
+  					// Collect all keys
 						for(var i=0;i<entriez.length;i++){
 								if(( entriez[i].ar==yearz && entriez[i].man==monthz)){
 										entries.push(entriez[i]);
-										if(servlist[entriez[i].service] != undefined){
-												servlist[entriez[i].service].cnt++;
-												servlist[entriez[i].service].interv+=parseInt(entriez[i].interval);												
+										var interval=parseInt(entriez[i].interval);
+										if(interval>10000) interval=0;
+										var service=entriez[i].service;
+										if(servlist[service] != undefined){
+												servlist[service].cnt++;
+												servlist[service].interv+=interval;	
+												if(entriez[i].interval<servlist[service].min) servlist[service].min=interval;
+												if(entriez[i].interval>servlist[service].max) servlist[service].max=interval;
 										}else{
 												servlist[entriez[i].service]={
 														"nam":entriez[i].service,
 														"cnt":1,
-														"interv":entriez[i].interval
+														"min":interval,
+														"max":interval,
+														"interv":interval
 												}	
 										}								
 								}
 						}
 						
+						// Make forward looking sums
+						var intsum=0;
+						var cntsum=0;
 						for (var key in servlist) {
+								intsum+=servlist[key].interv;
+								cntsum+=servlist[key].cnt;
 						    keys.push(key);
 						}
-						alert(keys.length);
+						
+						// Draw mf diagram
+						var accured=0;
+						var accuredang=0;
 
-																								
+						ctx.font="20px Arial Narrow";
+						
+						
+						var centx=400;
+						var centy=220;
+
+						for (var key in servlist) {
+								var servo=servlist[key];
+								var servi=servo.interv/intsum;
+								
+								var startang=accured*Math.PI*2.0;
+								var endang=(accured+servi)*Math.PI*2.0;
+								var startangh=(accured+(servi*0.5))*Math.PI*2.0;
+								var startanghh=(accuredang+(servi*0.5))*Math.PI*2.0;								
+
+					      var xk=centx+(Math.cos(startangh)*150.0);
+					      var yk=centy+(Math.sin(startangh)*150.0);
+					      var xks=centx+(Math.cos(startang)*150.0);
+					      var yks=centy+(Math.sin(startang)*150.0);
+					      var xke=centx+(Math.cos(endang)*150.0);
+					      var yke=centy+(Math.sin(endang)*150.0);
+					      var xkr=centx+(Math.cos(startanghh)*220.0);
+					      var ykr=centy+(Math.sin(startanghh)*220.0);					      
+
+					      var wwidth=ctx.measureText(key).width;
+					      if(wwidth<100) wwidth=100;
+										
+								sst=colorz[key];
+								ctx.strokeStyle=sst;
+								ctx.fillStyle=sst;
+
+					      ctx.lineWidth = 3;
+					      ctx.beginPath();
+					      ctx.moveTo(centx,centy);
+					      ctx.lineTo(xks,yks);
+					      ctx.arc(centx,centy, 150, startang, endang, false);
+					      ctx.moveTo(centx,centy);
+					      ctx.lineTo(xke,yke);
+					      ctx.fill();
+
+								ctx.strokeStyle="#fff";
+					      ctx.lineWidth = 3;
+					      ctx.stroke();								
+
+								ctx.strokeStyle="#000";
+					      
+					      ctx.beginPath();
+					      ctx.moveTo(xk,yk);
+					      ctx.lineTo(xkr,ykr);
+					      if(xkr>xk){
+					      		ctx.lineTo(xkr+wwidth,ykr);
+										ctx.textAlign="left";
+					      }else{
+					      		ctx.lineTo(xkr-wwidth,ykr);					      
+										ctx.textAlign="right";
+					      }
+					      ctx.stroke();					      
+
+								ctx.fillStyle="#000";								
+								ctx.fillText(key,xkr,ykr-4);
+								
+								accured+=servi;
+								if(servi<0.04){
+										accuredang+=0.04;
+								}else{
+										accuredang+=(servi*0.9);
+								}
+						}												
+
 				}
 
 				//Update olist (iterating over entries)
@@ -412,9 +496,9 @@
 				<div class="topmenu">
 						<table>
 								<td>Sort:&nbsp;<select onchange="redraw()" id="sortz"><option value="U">&#x25B2;</option><option value="D">&#x25BC;</option><option value="T">&hearts;</option></select></td>
-								<td>Year:&nbsp;<select onchange="redraw()" id="yearz"><option>2015</option><option>2016</option><option>2017</option></select></td>
-								<td>Month:&nbsp;<select onchange="redraw()" id="monthz"><option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option><option value="04">Apr</option><option value="05">May</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Aug</option><option value="09">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="01">Dec</option></select></td>
-								<td>Day:&nbsp;<select onchange="redraw()" id="dayz"><option>01</option><option>02</option><option>03</option><option>04</option><option>05</option><option>06</option><option>07</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option></select></td>
+								<td>Year:&nbsp;<select onchange="redraw()" id="yearz"><option>2015</option><option selected="selected">2016</option><option>2017</option></select></td>
+								<td>Month:&nbsp;<select onchange="redraw()" id="monthz"><option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option><option value="04">Apr</option><option value="05">May</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Aug</option><option value="09" selected="selected">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="01">Dec</option></select></td>
+								<td>Day:&nbsp;<select onchange="redraw()" id="dayz"><option>01</option><option>02</option><option>03</option><option>04</option><option>05</option><option>06</option><option>07</option><option>08</option><option selected="selected">09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option></select></td>
 								<td>View:&nbsp;<select onchange="redraw()" id="viewz"><option>Daily R</option><option>View R</option><option>Tab R</option><option>Down R</option><option>Month R</option></select></td>
 								<td>Service:&nbsp;<select onchange="redraw()" id="servz"></select></td>
 						</table>
