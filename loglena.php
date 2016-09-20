@@ -332,8 +332,21 @@
 						
 						
 						var centx=400;
-						var centy=220;
-
+						var centy=250;
+						
+						ctx.shadowBlur=15;
+						ctx.shadowColor="black";						
+						ctx.shadowOffsetX=7;
+						ctx.shadowOffsetY=7;
+									      
+			      ctx.beginPath();
+			      ctx.arc(centx,centy, 150, 0, Math.PI*2.0 , false);
+			      ctx.fill();
+			      ctx.shadowBlur=0;
+						ctx.shadowColor="none";						
+						ctx.shadowOffsetX=0;
+						ctx.shadowOffsetY=0;
+					      
 						for (var key in servlist) {
 								var servo=servlist[key];
 								var servi=servo.interv/intsum;
@@ -343,12 +356,12 @@
 								var startangh=(accured+(servi*0.5))*Math.PI*2.0;
 								var startanghh=(accuredang+(servi*0.5))*Math.PI*2.0;								
 
-					      var xk=centx+(Math.cos(startangh)*150.0);
-					      var yk=centy+(Math.sin(startangh)*150.0);
-					      var xks=centx+(Math.cos(startang)*150.0);
-					      var yks=centy+(Math.sin(startang)*150.0);
-					      var xke=centx+(Math.cos(endang)*150.0);
-					      var yke=centy+(Math.sin(endang)*150.0);
+					      var xk=centx+(Math.cos(startangh)*140.0);
+					      var yk=centy+(Math.sin(startangh)*140.0);
+					      var xks=centx+(Math.cos(startang)*140.0);
+					      var yks=centy+(Math.sin(startang)*140.0);
+					      var xke=centx+(Math.cos(endang)*140.0);
+					      var yke=centy+(Math.sin(endang)*140.0);
 					      var xkr=centx+(Math.cos(startanghh)*220.0);
 					      var ykr=centy+(Math.sin(startanghh)*220.0);					      
 
@@ -393,7 +406,7 @@
 								if(servi<0.04){
 										accuredang+=0.04;
 								}else{
-										accuredang+=(servi*0.9);
+										accuredang+=(servi*0.95);
 								}
 						}												
 
@@ -441,6 +454,8 @@
 		date_default_timezone_set("Europe/Stockholm");
 		
 		$pdo = new PDO('sqlite:loglena4.db');
+
+		// Read Data ...
 		$sql = "SELECT id,uuid,service,datetime(timestamp/1000, 'unixepoch', 'localtime') as timest,timestamp as timez FROM serviceLogEntries LIMIT 30000 OFFSET 80000";
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute();
