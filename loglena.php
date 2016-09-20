@@ -146,6 +146,9 @@
 
 						}
 
+						// Linewidth
+			      ctx.lineWidth = 1.5;
+
 						var j=0;
 						var lxk=0;
 						var nxk=0;
@@ -220,6 +223,9 @@
 						
 						// Remember Prev Array!
 						var servcoord=[];
+
+						// Linewidth
+			      ctx.lineWidth = 1.5;
 					
 						// No sorting in this view!
 						for(i=0;i<entries.length;i++){

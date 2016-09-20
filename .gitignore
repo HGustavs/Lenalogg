@@ -1,2 +1,6 @@
 
 *.db
+
+ipNumbers.sql
+
+*.db copy
